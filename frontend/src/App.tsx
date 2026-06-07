@@ -1,6 +1,9 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import LoginPage from './pages/LoginPage';
+import LeadsPage from './pages/LeadsPage';
+import LeadDetailPage from './pages/LeadDetailPage';
+import LeadFormPage from './pages/LeadFormPage';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function DashboardPage() {
@@ -26,6 +29,38 @@ function App() {
               element={
                 <ProtectedRoute>
                   <DashboardPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/leads"
+              element={
+                <ProtectedRoute>
+                  <LeadsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/leads/new"
+              element={
+                <ProtectedRoute>
+                  <LeadFormPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/leads/:id"
+              element={
+                <ProtectedRoute>
+                  <LeadDetailPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/leads/:id/edit"
+              element={
+                <ProtectedRoute>
+                  <LeadFormPage />
                 </ProtectedRoute>
               }
             />

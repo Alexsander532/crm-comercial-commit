@@ -1,0 +1,3 @@
+# No Separate Interactions Table
+
+In a typical CRM, human interactions (calls, emails, meetings) are stored in a separate `interactions` table. We decided to merge them into `timeline_events` as a type (`INTERACTION`) with sub-type stored in metadata JSONB (`type: LIGACAO`, `description: ...`). This eliminates a table, an entity, a repository, and a controller — simplifying the MVP significantly. The trade-off is that querying "show me all calls" requires filtering by `timeline_events.type = 'INTERACTION' AND metadata->>'type' = 'LIGACAO'` instead of a simple `interactions.type = 'LIGACAO'`. This is acceptable for MVP scale and can be optimized with GIN indexes if needed.

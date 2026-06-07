@@ -1,8 +1,8 @@
 # Plano Mestre — CRM Comercial
 
 **Projeto**: CRM Interno Comercial da Commit  
-**Data**: 2026-06-06  
-**Versão**: 1.0
+**Data**: 2026-06-07 (atualizado após grilling session)  
+**Versão**: 2.0
 
 ---
 
@@ -85,6 +85,84 @@ main
 ├── ...
 ```
 
+## Regras de Permissão
+
+| Ação | DIRETOR | GER_AQUIS | GER_PROSP | AQUISICAO | PROSPECCAO |
+|------|---------|-----------|-----------|-----------|------------|
+| Criar lead | ✅ | ✅ | ❌ | ✅ | ❌ |
+| Mover no pipeline | ✅ | ❌ | ✅ | ❌ | ✅ (próprio) |
+| Editar lead | ✅ (qualquer) | ✅ (time) | ✅ (time) | ✅ (próprio) | ✅ (atribuído) |
+| Arquivar lead | ✅ | ❌ | ✅ (time) | ❌ | ✅ (atribuído) |
+| Atribuir lead | ✅ | ❌ | ✅ | ❌ | ❌ |
+| Reativar lead | ✅ | ❌ | ✅ | ❌ | ✅ (atribuído) |
+| Criar tarefa | ✅ (qualquer) | ✅ (time aquis.) | ✅ (time prosp.) | ❌ | ❌ |
+| Completar tarefa | — | — | — | — | ✅ (atribuída) |
+| Cancelar tarefa | ✅ | ✅ (time) | ✅ (time) | ❌ | ❌ |
+| Registrar interação | ✅ (qualquer) | ✅ (time) | ✅ (time) | ✅ (próprio lead) | ✅ (atribuído) |
+| Gerenciar contatos | ✅ (qualquer) | ✅ (time) | ✅ (time) | ✅ (próprio lead) | ✅ (atribuído) |
+
+## Regras de Visibilidade
+
+| Papel | Leads visíveis | Tarefas visíveis |
+|-------|---------------|-----------------|
+| DIRETOR | Todos | Todas |
+| GERENTE_AQUISICAO | Criados pelo time de aquisição (qualquer estágio) | Tarefas do time |
+| GERENTE_PROSPECCAO | Atribuídos ao time de prospecção (qualquer estágio) | Tarefas do time |
+| AQUISICAO | Que criou (qualquer estágio) | Atribuídas a si |
+| PROSPECCAO | Atribuídos a si | Atribuídas a si |
+
+## Fluxo de Atribuição
+
+1. AQUISICAO cria lead → `assigned_to = null`, status = NOVO
+2. Lead sem atribuição visível apenas para GERENTES e DIRETOR
+3. GERENTE_PROSPECCAO atribui manualmente a PROSPECCAO do time
+4. PROSPECCAO só vê leads atribuídos a si
+
+## Transições do Pipeline
+
+```
+Avanço:     NOVO → CONTATO → NEGOCIACAO → {GANHO, PERDIDO}
+Retrocesso: NEGOCIACAO → CONTATO → NOVO
+Arquivo:     Qualquer (exceto GANHO/PERDIDO) → ARQUIVADO
+Reativação:  ARQUIVADO → NOVO (sempre NOVO, nunca ao estágio anterior)
+Bloqueado:   Pular estágio (NOVO ↛ NEGOCIACAO), GANHO/PERDIDO ↛ qualquer
+```
+
+## Dashboard por Papel
+
+| Papel | Cards |
+|-------|-------|
+| DIRETOR | Total leads, leads por status, conversão geral, tarefas atrasadas por time, leads frios, atividade |
+| GERENTE_AQUISICAO | Leads criados pelo time, avanço no pipeline, produtividade |
+| GERENTE_PROSPECCAO | Leads do time, conversão, tarefas atrasadas, leads frios |
+| AQUISICAO + PROSPECCAO | Dashboard simplificado compartilhado: meus leads, minhas tarefas |
+
+## Regras do Kanban
+
+- Cards ordenados por **última atividade** (timeline mais recente primeiro)
+- Sem drag-to-reorder no MVP
+- Busca textual apenas em campos do lead (company_name, site, instagram, notes)
+- Busca em contatos fica para versão futura
+
+## Regras de Desativação
+
+Ao desativar um usuário (`is_active = false`):
+- `assigned_to` e `created_by` permanecem intactos (auditoria)
+- Gerente encontra leads órfãos via filtro "usuários inativos": `WHERE assigned_to IN (SELECT id FROM users WHERE is_active = false)`
+- Reatribuição manual pelo gerente
+
+## Hierarquia
+
+```
+DIRETOR (manager_id = null)
+├── GERENTE_AQUISICAO (manager_id = DIRETOR)
+│   └── AQUISICAO (manager_id = GERENTE_AQUISICAO)
+└── GERENTE_PROSPECCAO (manager_id = DIRETOR)
+    └── PROSPECCAO (manager_id = GERENTE_PROSPECCAO)
+```
+
+`manager_id` sempre aponta para o superior imediato. Usado em queries para determinar escopo de visibilidade.
+
 ## Convenções
 
 ### Commits
@@ -124,9 +202,14 @@ main
 1. **Backend MVC**: Controller → Service → Repository
 2. **DTO Pattern**: Nunca expor entidade JPA diretamente
 3. **Response Wrapper**: `{ data, message, timestamp }` em TODOS endpoints
-4. **Timeline Events**: Toda ação de estado gera evento (imutável)
-5. **Hierarquia**: `manager_id` + `role` define acesso (Service layer)
+4. **Timeline Events**: Toda ação de estado gera evento (imutável). Interações (ligação, email, etc.) são tipos de TimelineEvent, não tabela separada
+5. **Hierarquia**: `manager_id` sempre aponta para o superior imediato (incluindo GERENTE → DIRETOR)
 6. **Tests**: TDD obrigatório — teste falha → implementa → teste passa
+7. **Segments**: Enum fixo (TECNOLOGIA, FINANCAS, SAUDE, EDUCACAO, VAREJO, OUTRO), sem CRUD no MVP
+8. **Search**: Apenas campos do lead (ILIKE), sem JOIN em contatos
+9. **Kanban order**: Por última atividade, sem drag-to-reorder
+10. **Reativação**: ARQUIVADO sempre volta a NOVO
+11. **Permissões**: Quem vê pode editar (leads, contatos). Cancelamento de tarefa: só criador/gerente/DIRETOR
 
 ## Tecnologias
 
@@ -178,8 +261,10 @@ CREATE TABLE leads (
     site VARCHAR(500),
     instagram VARCHAR(200),
     whatsapp VARCHAR(20),
-    address TEXT NOT NULL,
-    segment VARCHAR(100) NOT NULL,
+    address TEXT,
+    segment VARCHAR(100) NOT NULL CHECK (segment IN (
+        'TECNOLOGIA', 'FINANCAS', 'SAUDE', 'EDUCACAO', 'VAREJO', 'OUTRO'
+    )),
     notes TEXT,
     enriched_data JSONB,
     status VARCHAR(20) NOT NULL DEFAULT 'NOVO' CHECK (status IN (
@@ -216,25 +301,7 @@ CREATE TABLE contacts (
 CREATE INDEX idx_contacts_lead ON contacts(lead_id);
 
 -- ============================================================
--- V4__create_interactions.sql
--- ============================================================
-CREATE TABLE interactions (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    lead_id UUID NOT NULL REFERENCES leads(id) ON DELETE CASCADE,
-    user_id UUID NOT NULL REFERENCES users(id),
-    type VARCHAR(20) NOT NULL CHECK (type IN (
-        'LIGACAO', 'EMAIL', 'REUNIAO', 'OBSERVACAO', 'PROPOSTA'
-    )),
-    description TEXT NOT NULL,
-    proposal_url VARCHAR(500),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE INDEX idx_interactions_lead ON interactions(lead_id);
-CREATE INDEX idx_interactions_user ON interactions(user_id);
-
--- ============================================================
--- V5__create_tasks.sql
+-- V4__create_tasks.sql
 -- ============================================================
 CREATE TABLE tasks (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -260,7 +327,7 @@ CREATE INDEX idx_tasks_lead ON tasks(lead_id);
 CREATE INDEX idx_tasks_status ON tasks(status);
 
 -- ============================================================
--- V6__create_timeline_events.sql
+-- V5__create_timeline_events.sql
 -- ============================================================
 CREATE TABLE timeline_events (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -280,17 +347,16 @@ CREATE INDEX idx_timeline_lead ON timeline_events(lead_id);
 CREATE INDEX idx_timeline_created ON timeline_events(created_at);
 
 -- ============================================================
--- V7__seed_data.sql
+-- V6__seed_data.sql
 -- ============================================================
-INSERT INTO users (id, name, email, password_hash, role, is_active)
-VALUES (
-    '550e8400-e29b-41d4-a716-446655440000',
-    'Diretor',
-    'diretor@commit.com',
-    '$2a$10$N9qo8uLOickgx2ZMRZoMy.MqrqBtF6zOqTdpA6wYJp7zXxL1O0k2a',
-    'DIRETOR',
-    TRUE
-);
+INSERT INTO users (id, name, email, password_hash, role, manager_id, is_active)
+VALUES
+    ('550e8400-e29b-41d4-a716-446655440000', 'Diretor', 'diretor@commit.com',
+     '$2a$10$N9qo8uLOickgx2ZMRZoMy.MqrqBtF6zOqTdpA6wYJp7zXxL1O0k2a', 'DIRETOR', NULL, TRUE),
+    ('550e8400-e29b-41d4-a716-446655440001', 'Gerente Aquisição', 'gerente.aquisicao@commit.com',
+     '$2a$10$N9qo8uLOickgx2ZMRZoMy.MqrqBtF6zOqTdpA6wYJp7zXxL1O0k2a', 'GERENTE_AQUISICAO', '550e8400-e29b-41d4-a716-446655440000', TRUE),
+    ('550e8400-e29b-41d4-a716-446655440002', 'Gerente Prospecção', 'gerente.prospeccao@commit.com',
+     '$2a$10$N9qo8uLOickgx2ZMRZoMy.MqrqBtF6zOqTdpA6wYJp7zXxL1O0k2a', 'GERENTE_PROSPECCAO', '550e8400-e29b-41d4-a716-446655440000', TRUE);
 ```
 
 ---
@@ -340,9 +406,9 @@ PATCH  /api/leads/{id}/contacts/{cid}/main → Definir principal
 
 ### Interactions
 ```
-GET    /api/leads/{id}/interactions   → Histórico
-POST   /api/leads/{id}/interactions   → Registrar
+POST   /api/leads/{id}/timeline      → Registrar interação (tipo INTERACTION no TimelineEvent)
 ```
+> Interações são registradas como TimelineEvent do tipo INTERACTION. Não existe endpoint separado.
 
 ### Tasks
 ```
@@ -369,9 +435,9 @@ GET    /api/dashboard/team            → Overview do time
 
 ### Segments
 ```
-GET    /api/segments                  → Listar
-POST   /api/segments                  → Adicionar (DIRETOR)
+GET    /api/segments                  → Listar (enum fixo, sem CRUD)
 ```
+> Segmentos são um enum fixo (TECNOLOGIA, FINANCAS, SAUDE, EDUCACAO, VAREJO, OUTRO). Sem CRUD no MVP.
 
 ---
 
@@ -453,3 +519,4 @@ CRM_interno_comercial/
 
 **Registro de Alterações**:
 - v1.0 (2026-06-06) — Plano mestre inicial com 9 features, schema completo, API, rotas
+- v2.0 (2026-06-07) — Refinamento após grilling session: remoção da tabela interactions, address opcional, regras de permissão/visibilidade, hierarquia com manager_id apontando para DIRETOR, enum fixo de segmentos, transições do pipeline, dashboard simplificado para AQUISICAO+PROSPECCAO, fluxo de atribuição, regras de desativação

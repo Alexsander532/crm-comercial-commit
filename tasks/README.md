@@ -11,12 +11,12 @@
 | S1 | Setup do Projeto | [sprint-01-foundation.md](sprint-01-foundation.md) | 1 dia | ✅ Concluído |
 | S2 | Auth + Login | [sprint-02-auth.md](sprint-02-auth.md) | 1 dia | ✅ Concluído (PR #3) |
 | S3 | Leads CRUD | [sprint-03-leads.md](sprint-03-leads.md) | 1 dia | ✅ Concluído (PR #4) |
-| S4 | Pipeline Kanban | [sprint-04-kanban.md](sprint-04-kanban.md) | 1 dia | 🔴 Não iniciado |
-| S5 | Contatos | [sprint-05-contacts.md](sprint-05-contacts.md) | 0.5 dia | 🔴 Não iniciado |
-| S6 | Tarefas | [sprint-06-tasks.md](sprint-06-tasks.md) | 1 dia | 🔴 Não iniciado |
-| S7 | Timeline | [sprint-07-timeline.md](sprint-07-timeline.md) | 1 dia | 🔴 Não iniciado |
-| S8 | Dashboard | [sprint-08-dashboard.md](sprint-08-dashboard.md) | 0.5 dia | 🔴 Não iniciado |
-| S9 | Polish | [sprint-09-polish.md](sprint-09-polish.md) | 1 dia | 🔴 Não iniciado |
+| S4 | Pipeline Kanban | [sprint-04-kanban.md](sprint-04-kanban.md) | 1 dia | ✅ Concluído (PR #5) |
+| S5 | Contatos | [sprint-05-contacts.md](sprint-05-contacts.md) | 0.5 dia | ✅ Concluído (PR #6) |
+| S6 | Tarefas | [sprint-06-tasks.md](sprint-06-tasks.md) | 1 dia | ✅ Concluído (PR #7) |
+| S7 | Timeline | [sprint-07-timeline.md](sprint-07-timeline.md) | 1 dia | ✅ Concluído (PR #8) |
+| S8 | Dashboard | [sprint-08-dashboard.md](sprint-08-dashboard.md) | 0.5 dia | ✅ Concluído (PR #9) |
+| S9 | Polish | [sprint-09-polish.md](sprint-09-polish.md) | 1 dia | ✅ Concluído (PR #10) |
 
 ---
 

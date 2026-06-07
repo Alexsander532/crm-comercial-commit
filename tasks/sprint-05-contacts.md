@@ -2,139 +2,49 @@
 
 **Duração estimada**: 0.5 dia
 **Depende de**: S3 (Leads CRUD)
-**Bloqueia**: S7 (Timeline precisa de eventos de contato)
-**Pode rodar em paralelo com**: S4 (Kanban) — são independentes!
+**Bloqueia**: S7 (Timeline)
+**Status**: ✅ Concluído (PR #6)
 
 ---
 
 ## 🎯 Objetivo
 
-Múltiplos contatos por lead, com marcação de principal, tipos de contato (email, telefone, etc).
-
----
-
-## 📊 Dependências
-
-```
-T29 (Contact entity) ──→ T30 (ContactRepository) ──┬── T31 (ContactService)
-                                                      │
-                       T29 ──→ ContactDTOs ──────────┘
-                                                      │
-                                               T32 (ContactController)
-                                                      │
-                                               T33 (Frontend Contatos)
-```
-
-### Pode rodar em paralelo com:
-- **Sprint 4 (Kanban)** — Contatos e Pipeline são independentes
+Múltiplos contatos por lead, com marcação de principal.
 
 ---
 
 ## Tasks
 
-### T29 — Contact entity + ContactType
+### T29-T32 — Backend (entity + repository + service + controller) ✅
 
-| Campo | Valor |
-|-------|-------|
-| **ID** | T29 |
-| **Tempo est.** | 10 min |
-| **Depende de** | S3 (Lead entity existe) |
-| **Arquivos** | `model/Contact.java`, `model/ContactType.java` |
-| **Teste** | `mvn compile` |
+**O que foi feito:**
+- `Contact.java` — JPA entity vinculada a Lead (ManyToOne), com name, role, phone, email, whatsapp, isMain
+- `ContactRepository` — findByLeadIdOrderByCreatedAtAsc, findByLeadIdAndIsMainTrue, countByLeadId
+- `ContactRequest` DTO com name (NotBlank), role, phone, email, whatsapp, notes (todos opcionais exceto name)
+- `ContactResponse` DTO com todos campos
+- `ContactService`:
+  - `create(leadId, request)` — primeiro contato vira automaticamente main
+  - `delete(leadId, contactId)` — valida pertinência ao lead
+  - `setAsMain(leadId, contactId)` — desmarca todos, marca selecionado
+- `ContactController`:
+  - `GET /leads/{id}/contacts` — listar
+  - `POST /leads/{id}/contacts` — criar
+  - `DELETE /leads/{id}/contacts/{cid}` — remover
+  - `PATCH /leads/{id}/contacts/{cid}/main` — definir como principal
 
-Contact: id, name, email, phone, role, type (enum), isMain, lead (ManyToOne), createdAt, updatedAt.
-ContactType: EMAIL, TELEFONE, LINKEDIN, WHATSAPP, OUTRO.
+### T33 — Frontend Contatos ✅
+- Seção de contatos integrada ao `LeadDetailPage.tsx`
+- Formulário inline para adicionar contato (nome obrigatório, cargo/telefone/email/whatsapp opcionais)
+- Lista de contatos com badge "Principal"
+- Botões para definir como principal e remover, com confirmação
 
-Commit: `feat(contacts): add Contact entity and ContactType enum`
+### Builds
+- Backend: 52/52 testes
+- Frontend: npm run build ✅
 
----
-
-### T30 — ContactRepository
-
-| Campo | Valor |
-|-------|-------|
-| **ID** | T30 |
-| **Tempo est.** | 10 min |
-| **Depende de** | T29 |
-| **Arquivos** | `repository/ContactRepository.java` |
-| **Teste** | `mvn compile` |
-
-Queries: findByLeadId, findMainContactByLeadId, existsByEmailAndLeadId.
-
-Commit: `feat(contacts): add ContactRepository`
-
----
-
-### T31 — ContactService
-
-| Campo | Valor |
-|-------|-------|
-| **ID** | T31 |
-| **Tempo est.** | 30 min |
-| **Depende de** | T30 |
-| **Arquivos** | `service/ContactService.java` |
-| **Teste** | `mvn test` |
-
-Métodos: create (verifica main), update, delete, setAsMain (desmarca o anterior), getContactsByLead, getMainContact.
-Regra: só pode haver 1 contato principal por lead.
-
-Commit: `feat(contacts): add ContactService with set-as-main logic`
+### PR
+**PR #6:** https://github.com/Alexsander532/crm-comercial-commit/pull/6
 
 ---
-
-### T32 — ContactController
-
-| Campo | Valor |
-|-------|-------|
-| **ID** | T32 |
-| **Tempo est.** | 20 min |
-| **Depende de** | T31 |
-| **Arquivos** | `controller/ContactController.java`, `dto/request/ContactRequest.java`, `dto/response/ContactResponse.java` |
-| **Teste** | curl nos endpoints |
-
-Endpoints:
-- POST /api/leads/{leadId}/contacts → criar contato
-- GET /api/leads/{leadId}/contacts → listar contatos
-- GET /api/leads/{leadId}/contacts/{id} → detalhar
-- PUT /api/leads/{leadId}/contacts/{id} → editar
-- PATCH /api/leads/{leadId}/contacts/{id}/main → definir como principal
-- DELETE /api/leads/{leadId}/contacts/{id} → remover
-
-Commit: `feat(contacts): add ContactController with CRUD and set-main`
-
----
-
-### T33 — Frontend Contatos
-
-| Campo | Valor |
-|-------|-------|
-| **ID** | T33 |
-| **Tempo est.** | 45 min |
-| **Depende de** | T32 |
-| **Arquivos** | `components/ContactList.tsx`, `components/ContactForm.tsx`, `services/contactService.ts`, `types/contact.ts` |
-| **Teste** | Navegador: CRUD de contatos |
-
-Lista de contatos no detail do lead, form para adicionar, badge "Principal", botão para definir como principal.
-
-Commit: `feat(contacts): add frontend contact list and form in lead detail`
-
----
-
-## 🔁 Execução paralela com Kanban (S4)
-
-```
-Agente A: S4 (Kanban completo)
-Agente B: S5 (Contatos) ← PODE RODAR EM PARALELO!
-```
-
----
-
-## ✅ Checklist
-
-- [ ] Criar contato em um lead funciona
-- [ ] Listar contatos de um lead
-- [ ] Definir contato como principal (desmarca o anterior)
-- [ ] Deletar contato
-- [ ] Frontend: lista + form + badge principal
 
 **Próximo sprint:** [Sprint 06 — Tarefas](sprint-06-tasks.md)

@@ -53,7 +53,9 @@ para GANHO, **Then** o sistema rejeita com erro 422 "Transição inválida"
 3. **Given** um lead na coluna NEGOCIACAO, **When** o usuário arrasta para
 PERDIDO, **Then** a transição é aceita
 4. **Given** um lead arquivado, **When** o usuário reativa, **Then** o lead
-volta a NOVO
+volta a NOVO e a timeline mantém o histórico completo (arquivamento + reativação)
+5. **Given** um lead na coluna GANHO, **When** o usuário tenta reativar,
+**Then** o sistema rejeita com erro 422 (GANHO não pode ser reativado)
 
 ---
 
@@ -77,8 +79,18 @@ role `AQUISICAO`, **Then** o funcionário tem manager_id = gerente
 **Then** retorna 403
 4. **Given** um PROSPECCAO logado, **When** ele tenta criar lead, **Then**
 retorna 403
-5. **Given** um GERENTE_PROSPECCAO logado, **When** ele acessa dashboard,
-**Then** ele vê dados apenas do seu time
+5. **Given** um GERENTE_PROSPECCAO logado, **When** ele acessa a lista de
+leads do seu time, **Then** ele vê apenas os leads atribuídos aos
+funcionários do seu time
+6. **Given** um GERENTE logado, **When** ele desativa um funcionário do seu
+time, **Then** o funcionário fica `is_active = false` e seus leads e
+tarefas permanecem no banco (assigned_to preservado)
+7. **Given** um funcionário desativado, **When** o gerente acessa o filtro
+"leads não atribuídos", **Then** os leads do funcionário desativado
+aparecem para reatribuição
+8. **Given** um gerente logado, **When** ele altera o assigned_to de um lead
+para outro funcionário ativo, **Then** o lead é reatribuído e a timeline
+cria evento `ASSIGNED` com de/para
 
 ---
 
@@ -252,7 +264,9 @@ automaticamente (no prazo/atrasado/vencido).
 - **TimelineEvent**: Registro imutável de tudo que aconteceu com um lead.
 Cada tipo tem metadata específica em JSONB.
 - **Interaction**: Interação humana com o lead (ligação, email, reunião,
-observação, proposta). Gera evento na timeline.
+observação, proposta). Tem `lead_id` (FK), `user_id` (quem registrou),
+`type` (ENUM), `description` e `proposal_url` (só para tipo PROPOSTA).
+Gera evento na timeline automaticamente.
 
 ## Success Criteria
 

@@ -1,0 +1,8 @@
+package com.commit.crm.model;
+
+public enum TimelineEventType {
+    CREATED, STATUS_CHANGED, FIELD_UPDATED,
+    INTERACTION, NOTE_ADDED, TASK_CREATED,
+    TASK_COMPLETED, ASSIGNED, CONTACT_ADDED,
+    CONTACT_UPDATED
+}

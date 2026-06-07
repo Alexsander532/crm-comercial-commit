@@ -9,7 +9,7 @@
 | Sprint | Feature | Arquivo | Duração Est. | Status |
 |--------|---------|---------|-------------|--------|
 | S1 | Setup do Projeto | [sprint-01-foundation.md](sprint-01-foundation.md) | 1 dia | ✅ Concluído |
-| S2 | Auth + Login | [sprint-02-auth.md](sprint-02-auth.md) | 1 dia | 🔴 Não iniciado |
+| S2 | Auth + Login | [sprint-02-auth.md](sprint-02-auth.md) | 1 dia | ✅ Concluído (PR #3) |
 | S3 | Leads CRUD | [sprint-03-leads.md](sprint-03-leads.md) | 1 dia | 🔴 Não iniciado |
 | S4 | Pipeline Kanban | [sprint-04-kanban.md](sprint-04-kanban.md) | 1 dia | 🔴 Não iniciado |
 | S5 | Contatos | [sprint-05-contacts.md](sprint-05-contacts.md) | 0.5 dia | 🔴 Não iniciado |

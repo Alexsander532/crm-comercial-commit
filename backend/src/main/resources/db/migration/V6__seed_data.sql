@@ -11,7 +11,7 @@ VALUES
         '550e8400-e29b-41d4-a716-446655440000',
         'Diretor',
         'diretor@commit.com',
-        '$2a$10$N9qo8uLOickgx2ZMRZoMy.MqrqBtF6zOqTdpA6wYJp7zXxL1O0k2a',
+        '$2a$10$3ami2.k/35etGTCDudQwx.sWLUXYl1r0b221HmrIBG1LOlU52NJAe',
         'DIRETOR',
         NULL,
         TRUE
@@ -21,7 +21,7 @@ VALUES
         '550e8400-e29b-41d4-a716-446655440001',
         'Gerente de Aquisição',
         'gerente.aquisicao@commit.com',
-        '$2a$10$N9qo8uLOickgx2ZMRZoMy.MqrqBtF6zOqTdpA6wYJp7zXxL1O0k2a',
+        '$2a$10$3ami2.k/35etGTCDudQwx.sWLUXYl1r0b221HmrIBG1LOlU52NJAe',
         'GERENTE_AQUISICAO',
         '550e8400-e29b-41d4-a716-446655440000',
         TRUE
@@ -31,7 +31,7 @@ VALUES
         '550e8400-e29b-41d4-a716-446655440002',
         'Gerente de Prospecção',
         'gerente.prospeccao@commit.com',
-        '$2a$10$N9qo8uLOickgx2ZMRZoMy.MqrqBtF6zOqTdpA6wYJp7zXxL1O0k2a',
+        '$2a$10$3ami2.k/35etGTCDudQwx.sWLUXYl1r0b221HmrIBG1LOlU52NJAe',
         'GERENTE_PROSPECCAO',
         '550e8400-e29b-41d4-a716-446655440000',
         TRUE

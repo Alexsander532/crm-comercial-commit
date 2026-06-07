@@ -1,27 +1,5 @@
 services:
   # ================================================================
-  # POSTGRESQL
-  # ================================================================
-  postgres:
-    image: postgres:15-alpine
-    container_name: crm-postgres
-    restart: unless-stopped
-    ports:
-      - "${DB_PORT:-5432}:5432"
-    environment:
-      POSTGRES_DB: ${DB_NAME:-crm_comercial}
-      POSTGRES_USER: ${DB_USERNAME:-crm}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-crm_secret}
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-crm} -d ${DB_NAME:-crm_comercial}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
-
-  # ================================================================
   # BACKEND (Spring Boot)
   # ================================================================
   backend:
@@ -32,17 +10,8 @@ services:
     restart: unless-stopped
     ports:
       - "${SERVER_PORT:-8080}:8080"
-    environment:
-      DB_HOST: postgres
-      DB_PORT: 5432
-      DB_NAME: ${DB_NAME:-crm_comercial}
-      DB_USERNAME: ${DB_USERNAME:-crm}
-      DB_PASSWORD: ${DB_PASSWORD:-crm_secret}
-      JWT_SECRET: ${JWT_SECRET:-}
-      JWT_EXPIRATION: ${JWT_EXPIRATION:-86400000}
-    depends_on:
-      postgres:
-        condition: service_healthy
+    env_file:
+      - .env
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/api/health"]
       interval: 30s
@@ -64,7 +33,3 @@ services:
     depends_on:
       backend:
         condition: service_healthy
-
-volumes:
-  postgres-data:
-    driver: local

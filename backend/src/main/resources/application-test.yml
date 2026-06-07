@@ -1,0 +1,33 @@
+spring:
+  # ================================================================
+  # TEST DATASOURCE — Configurado pelo Testcontainers dinamicamente
+  # ================================================================
+  datasource:
+    url: jdbc:tc:postgresql:15-alpine:///crm_test
+    username: test
+    password: test
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+
+  # ================================================================
+  # JPA
+  # ================================================================
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    open-in-view: false
+
+  # ================================================================
+  # FLYWAY
+  # ================================================================
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+
+# ================================================================
+# JWT — Secret fixo para testes (não sensível)
+# ================================================================
+jwt:
+  secret: dGVzdC1zZWNyZXQtZG8tY3JtLWNvbWVyY2lhbC1xdWUtbmFvLWRldmUtc2VyLXVzYWRv
+  expiration: 86400000

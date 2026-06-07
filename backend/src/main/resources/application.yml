@@ -1,0 +1,54 @@
+spring:
+  application:
+    name: crm-comercial
+
+  # ================================================================
+  # DATASOURCE
+  # ================================================================
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:crm_comercial}
+    username: ${DB_USERNAME:crm}
+    password: ${DB_PASSWORD:crm_secret}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      idle-timeout: 30000
+
+  # ================================================================
+  # JPA
+  # ================================================================
+  jpa:
+    hibernate:
+      ddl-auto: validate  # Flyway gerencia o schema
+    show-sql: false
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          lob:
+            non_contextual_creation: true
+
+  # ================================================================
+  # FLYWAY
+  # ================================================================
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+
+# ================================================================
+# SERVER
+# ================================================================
+server:
+  port: ${SERVER_PORT:8080}
+
+# ================================================================
+# JWT
+# ================================================================
+jwt:
+  # AVISO: Troque este secret em produção! Use uma chave de 256+ bits.
+  # Gere uma nova: openssl rand -base64 64
+  secret: ${JWT_SECRET:d2ViLXNlY3JldC1kby1jcm0tY29tZXJjaWFsLWNvbW1pdC1xdWUtZGV2ZS1zZXItdXNhZG8tZW0tcHJvZHVjYW8=}
+  expiration: ${JWT_EXPIRATION:86400000}  # 24 horas em milissegundos

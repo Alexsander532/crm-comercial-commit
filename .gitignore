@@ -49,3 +49,6 @@ Thumbs.db
 # ================================================================
 # JWT secret não deve ser commitado, mas temos default no application.yml
 # Dados sensíveis apenas em .env (não commitado)
+branch_structure.json
+temp_auto_push.bat
+temp_interactive_push.bat

@@ -6,6 +6,7 @@ const NAV_ITEMS = [
   { path: '/leads', label: 'Leads', icon: '📋' },
   { path: '/kanban', label: 'Kanban', icon: '📌' },
   { path: '/tasks', label: 'Tarefas', icon: '✅' },
+  { path: '/users', label: 'Usuários', icon: '👥' },
 ];
 
 export default function Layout({ children }: { children: React.ReactNode }) {

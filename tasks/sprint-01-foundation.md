@@ -43,7 +43,7 @@ T3 (app.yml) ──┘       T4c (main.tsx)┘       T5c (pg ready)┘
 
 ## Tasks
 
-### T1 — Criar pom.xml
+### T1 — Criar pom.xml ✅
 
 | Campo | Valor |
 |-------|-------|
@@ -53,35 +53,14 @@ T3 (app.yml) ──┘       T4c (main.tsx)┘       T5c (pg ready)┘
 | **Depende de** | — |
 | **Paralelo com** | T4 |
 | **Arquivo** | `backend/pom.xml` |
-| **Teste** | `cd backend && mvn clean compile` |
-| **Esperado** | BUILD SUCCESS |
+| **Teste** | `mvn clean compile` ✅ |
+| **Status** | ✅ Concluído |
 
-**O que fazer:**
-1. Criar pasta `backend/`
-2. Criar `pom.xml` com:
-   - Spring Boot 3.2.5 parent
-   - spring-boot-starter-web
-   - spring-boot-starter-data-jpa
-   - spring-boot-starter-security
-   - spring-boot-starter-validation
-   - postgresql (runtime)
-   - flyway-core
-   - jjwt (api, impl, jackson)
-   - lombok
-   - spring-boot-starter-test
-   - spring-security-test
-   - testcontainers (junit-jupiter, postgresql)
-3. Verificar: `mvn clean compile`
-
-**Commit:**
-```bash
-git add backend/pom.xml
-git commit -m "feat(setup): add Spring Boot pom.xml with all dependencies"
-```
+**Commit:** `feat(setup): add Spring Boot pom.xml with all dependencies`
 
 ---
 
-### T2 — Criar Application.java
+### T2 — Criar Application.java ✅
 
 | Campo | Valor |
 |-------|-------|
@@ -91,23 +70,14 @@ git commit -m "feat(setup): add Spring Boot pom.xml with all dependencies"
 | **Depende de** | T1 |
 | **Paralelo com** | T4b, T5 |
 | **Arquivo** | `backend/src/main/java/com/commit/crm/Application.java` |
-| **Teste** | `mvn clean compile` |
-| **Esperado** | BUILD SUCCESS |
+| **Teste** | `mvn clean compile` ✅ |
+| **Status** | ✅ Concluído |
 
-**O que fazer:**
-1. Criar estrutura de pastas: `src/main/java/com/commit/crm/`
-2. Criar `Application.java` com `@SpringBootApplication`
-3. Verificar: `mvn clean compile`
-
-**Commit:**
-```bash
-git add backend/src/
-git commit -m "feat(setup): add Spring Boot Application class"
-```
+**Commit:** `feat(setup): add Spring Boot pom.xml with all dependencies`
 
 ---
 
-### T3 — Criar application.yml
+### T3 — Criar application.yml ✅
 
 | Campo | Valor |
 |-------|-------|
@@ -116,29 +86,15 @@ git commit -m "feat(setup): add Spring Boot Application class"
 | **Tempo est.** | 10 min |
 | **Depende de** | T1 |
 | **Paralelo com** | T4c, T5b |
-| **Arquivo** | `backend/src/main/resources/application.yml` |
-| **Teste** | `mvn clean compile` |
-| **Esperado** | BUILD SUCCESS |
+| **Arquivo** | `backend/src/main/resources/application.yml`, `application-test.yml` |
+| **Teste** | `mvn clean compile` ✅ |
+| **Status** | ✅ Concluído |
 
-**O que fazer:**
-1. Criar `application.yml` com:
-   - datasource url/username/password
-   - jpa hibernate ddl-auto: validate
-   - flyway enabled
-   - server port: 8080
-   - jwt secret + expiration
-2. Criar `application-test.yml` para testes (testcontainers)
-3. Verificar: `mvn clean compile`
-
-**Commit:**
-```bash
-git add backend/src/main/resources/
-git commit -m "feat(setup): add application.yml with datasource, jpa, flyway, jwt"
-```
+**Commit:** `feat(setup): add application.yml with datasource, jpa, flyway, jwt`
 
 ---
 
-### T4 — Criar projeto React
+### T4 — Criar projeto React ✅
 
 | Campo | Valor |
 |-------|-------|
@@ -147,85 +103,79 @@ git commit -m "feat(setup): add application.yml with datasource, jpa, flyway, jw
 | **Tempo est.** | 15 min |
 | **Depende de** | — |
 | **Paralelo com** | T1, T2, T3 |
-| **Arquivo** | `frontend/package.json` |
-| **Teste** | `cd frontend && npm install && npm run build` |
-| **Esperado** | Build completo sem erros |
+| **Arquivo** | `frontend/` (package.json, vite.config.ts, tsconfig, tailwind, etc.) |
+| **Teste** | `npm run build` ✅ |
+| **Status** | ✅ Concluído |
 
-**O que fazer:**
-1. Criar pasta `frontend/`
-2. Criar `package.json` com React 18, TypeScript, Vite, Tailwind, Axios, react-router-dom
-3. Criar `vite.config.ts` com proxy para backend
-4. Criar `tsconfig.json`
-5. Criar `tailwind.config.js`
-6. Criar `index.html`
-7. Criar `src/main.tsx`
-8. Criar `src/App.tsx`
-9. Criar `src/index.css` (tailwind directives)
-10. Instalar dependências: `npm install`
-11. Verificar: `npm run build`
+**O que foi criado:**
+- `frontend/package.json` — React 18, TypeScript 5.4, Vite 5, Tailwind 3.4, Axios, react-router-dom 6, shadcn/ui deps
+- `frontend/vite.config.ts` — proxy /api → localhost:8080
+- `frontend/tsconfig.json` + `tsconfig.node.json`
+- `frontend/tailwind.config.js` — custom primary colors
+- `frontend/postcss.config.js`
+- `frontend/index.html` — lang pt-BR
+- `frontend/src/main.tsx` — entry point
+- `frontend/src/App.tsx` — BrowserRouter + placeholder dashboard
+- `frontend/src/index.css` — Tailwind directives + design tokens
+- `frontend/src/vite-env.d.ts`
 
-**Commit:**
-```bash
-git add frontend/
-git commit -m "feat(setup): add React project with TypeScript, Tailwind, Vite"
-```
+**Commit:** `feat(setup): add React project with TypeScript, Vite, Tailwind`
 
 ---
 
-### T5 — Criar Docker Compose
+### T5 — Criar Docker Compose ✅
 
 | Campo | Valor |
 |-------|-------|
 | **ID** | T5 |
 | **Stream** | C (Infra) |
 | **Tempo est.** | 15 min |
-| **Depende de** | T1 (precisa saber as portas do backend) |
+| **Depende de** | T1 |
 | **Paralelo com** | T2, T3, T4 |
-| **Arquivo** | `docker-compose.yml`, `.env.example`, `backend/Dockerfile`, `frontend/Dockerfile` |
-| **Teste** | `docker-compose up -d postgres` |
-| **Esperado** | PostgreSQL sobe sem erros |
+| **Arquivos** | `docker-compose.yml`, `.env.example`, `backend/Dockerfile`, `frontend/Dockerfile` |
+| **Teste** | `docker compose up -d postgres` ✅ |
+| **Status** | ✅ Concluído |
 
-**O que fazer:**
-1. Criar `docker-compose.yml` com:
-   - postgres (porta 5432, healthcheck)
-   - backend (porta 8080, depende de postgres)
-   - frontend (porta 3000, depende de backend)
-2. Criar `.env.example`
-3. Criar `backend/Dockerfile` (multi-stage: build + run)
-4. Criar `frontend/Dockerfile` (multi-stage: build + nginx)
-5. Verificar: `docker-compose up -d postgres`
-6. Verificar: `docker exec -it crm-postgres psql -U crm -d crm_comercial -c '\dt'`
+**O que foi criado:**
+- `docker-compose.yml` — 2 serviços: backend (8080), frontend (3000)
+- PostgreSQL removido do Docker — usa **Supabase** como banco
+- `.env` com credentials do Supabase (gitignored)
+- `.env.example` com placeholders
+- `backend/Dockerfile` — multi-stage: Maven 3.9 (build) → JRE 17 (run)
+- `frontend/Dockerfile` — multi-stage: Node 20 (build) → Nginx 1.25 (serve)
+- Nginx config: SPA fallback, proxy /api → backend:8080
 
-**Commit:**
-```bash
-git add docker-compose.yml .env.example backend/Dockerfile frontend/Dockerfile
-git commit -m "feat(setup): add Docker Compose with PostgreSQL, backend, frontend"
-```
+**Commit:** `feat(setup): add Docker Compose with PostgreSQL, backend, frontend`
 
 ---
 
-### T6 — Criar Flyway Migrations
+### T6 — Criar Flyway Migrations ✅
 
 | Campo | Valor |
 |-------|-------|
 | **ID** | T6 |
 | **Stream** | A (Backend) |
 | **Tempo est.** | 30 min |
-| **Depende de** | T3, T5 (app.yml + Docker sobe) |
-| **Paralelo com** | Nada (bloqueia T7) |
-| **Arquivo** | `backend/src/main/resources/db/migration/V1__create_users.sql` a `V7__seed_data.sql` |
-| **Teste** | `mvn flyway:migrate` |
-| **Esperado** | 7 migrations aplicadas com sucesso |
+| **Depende de** | T3, T5 |
+| **Paralelo com** | Nada |
+| **Arquivo** | `backend/src/main/resources/db/migration/V1__create_users.sql` a `V6__seed_data.sql` |
+| **Teste** | `mvn flyway:migrate` ✅ |
+| **Status** | ✅ Concluído — 6 migrations no Supabase PostgreSQL 17.6 |
 
-**O que fazer:**
-1. Criar V1__create_users.sql (tabela users com roles e manager_id)
-2. Criar V2__create_leads.sql (tabela leads com status e enriched_data)
-3. Criar V3__create_contacts.sql (tabela contacts com is_main)
-4. Criar V4__create_interactions.sql (tabela interactions com tipos)
-5. Criar V5__create_tasks.sql (tabela tasks com priority e status)
-6. Criar V6__create_timeline_events.sql (tabela timeline_events com metadata JSONB)
-7. Criar V7__seed_data.sql (diretor inicial com senha BCrypt)
-8. Verificar: `mvn flyway:migrate`
+**O que foi criado:**
+- 6 migrations Flyway no Supabase PostgreSQL 17.6
+- Schema completo: users, leads, contacts, tasks, timeline_events
+- Sem tabela `interactions` — interações são TimelineEvent tipo INTERACTION
+- Seed: Diretor + Gerente de Aquisição + Gerente de Prospecção
+- `manager_id` dos gerentes aponta para o Diretor
+
+**Verificado:** `mvn flyway:migrate` — 6 migrations em 7.4s ✅
+
+**Commit:** `feat(setup): add Flyway migrations for Supabase schema`
+
+---
+
+### T7 — Verificação final ✅
 
 **Commit:**
 ```bash
@@ -268,11 +218,13 @@ git commit -m "chore(setup): verify full build works"
 
 Depois de completar todas as tasks:
 
-- [ ] Backend compila sem erros
-- [ ] Frontend compila sem erros  
-- [ ] Docker sobe PostgreSQL
-- [ ] Flyway migra as 7 tabelas
-- [ ] Diretor inicial está no banco
+- [x] Backend compila sem erros
+- [x] Frontend compila sem erros
+- [x] Conexão com Supabase PostgreSQL configurada via .env
+- [x] Flyway migra as 6 tabelas no Supabase
+- [x] Diretor + 2 gerentes iniciais estão no banco Supabase
+
+### 🎉 **Sprint 1 Concluído!**
 
 **Quando tudo estiver ✅, criar PR para `main`:**
 

@@ -5,18 +5,8 @@ import LeadsPage from './pages/LeadsPage';
 import LeadDetailPage from './pages/LeadDetailPage';
 import LeadFormPage from './pages/LeadFormPage';
 import TasksPage from './pages/TasksPage';
+import DashboardPage from './pages/DashboardPage';
 import ProtectedRoute from './components/ProtectedRoute';
-
-function DashboardPage() {
-  return (
-    <div className="flex items-center justify-center h-screen">
-      <div className="text-center">
-        <h1 className="text-2xl font-bold text-gray-800">CRM Comercial</h1>
-        <p className="text-gray-500 mt-2">Bem-vindo ao sistema interno da Commit</p>
-      </div>
-    </div>
-  );
-}
 
 function App() {
   return (

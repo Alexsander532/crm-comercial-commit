@@ -4,6 +4,7 @@ import LoginPage from './pages/LoginPage';
 import LeadsPage from './pages/LeadsPage';
 import LeadDetailPage from './pages/LeadDetailPage';
 import LeadFormPage from './pages/LeadFormPage';
+import TasksPage from './pages/TasksPage';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function DashboardPage() {
@@ -24,55 +25,14 @@ function App() {
         <div className="min-h-screen bg-gray-50">
           <Routes>
             <Route path="/login" element={<LoginPage />} />
-            <Route
-              path="/dashboard"
-              element={
-                <ProtectedRoute>
-                  <DashboardPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/leads"
-              element={
-                <ProtectedRoute>
-                  <LeadsPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/leads/new"
-              element={
-                <ProtectedRoute>
-                  <LeadFormPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/leads/:id"
-              element={
-                <ProtectedRoute>
-                  <LeadDetailPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/leads/:id/edit"
-              element={
-                <ProtectedRoute>
-                  <LeadFormPage />
-                </ProtectedRoute>
-              }
-            />
+            <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
+            <Route path="/leads" element={<ProtectedRoute><LeadsPage /></ProtectedRoute>} />
+            <Route path="/leads/new" element={<ProtectedRoute><LeadFormPage /></ProtectedRoute>} />
+            <Route path="/leads/:id" element={<ProtectedRoute><LeadDetailPage /></ProtectedRoute>} />
+            <Route path="/leads/:id/edit" element={<ProtectedRoute><LeadFormPage /></ProtectedRoute>} />
+            <Route path="/tasks" element={<ProtectedRoute><TasksPage /></ProtectedRoute>} />
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
-            <Route
-              path="*"
-              element={
-                <ProtectedRoute>
-                  <Navigate to="/dashboard" replace />
-                </ProtectedRoute>
-              }
-            />
+            <Route path="*" element={<ProtectedRoute><Navigate to="/dashboard" replace /></ProtectedRoute>} />
           </Routes>
         </div>
       </AuthProvider>
